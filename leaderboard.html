@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COMBINATORICS.exe — LEADERBOARD</title>
+  <title>Kombinatorika: rang-lista</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="sabotage.css">
 </head>
 <body class="lb-body">
   <div class="lb-shell">
     <header class="lb-header">
       <div>
-        <div class="logo">COMBINATORICS.exe // LIVE RANKING</div>
-        <div id="phase" class="phase">LOBBY</div>
+        <div class="logo">Rang-lista</div>
+        <div id="phase" class="phase">Čekanje</div>
       </div>
       <div class="lb-qr-wrap">
         <div id="qr" class="qr hidden"></div>
@@ -21,11 +20,11 @@
     </header>
 
     <div class="panel" style="margin-bottom:14px">
-      <div id="info" class="small" style="text-align:center">Učitavanje...</div>
+      <div id="info" class="small">Učitavanje…</div>
     </div>
 
     <div class="panel" style="margin-bottom:14px">
-      <div class="kicker">Uživo // sabotaže</div>
+      <h2>Sabotaže uživo</h2>
       <div id="feed"></div>
     </div>
 
@@ -34,15 +33,15 @@
         <thead>
           <tr>
             <th style="width:60px">#</th>
-            <th>TIM</th>
-            <th style="width:200px">ZADACI</th>
-            <th style="width:100px">POENI</th>
-            <th style="width:120px">VREME</th>
-            <th style="width:90px">POKUŠaji</th>
+            <th>Tim</th>
+            <th style="width:200px">Zadaci</th>
+            <th style="width:100px">Poeni</th>
+            <th style="width:120px">Vreme</th>
+            <th style="width:100px">Pokušaji</th>
           </tr>
         </thead>
         <tbody id="rows">
-          <tr><td colspan="6" class="small">Čekamo timove...</td></tr>
+          <tr><td colspan="6" class="small">Čekamo timove…</td></tr>
         </tbody>
       </table>
     </div>
