@@ -3,107 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COMBINATORICS.exe — VAULT</title>
+  <title>Kombinatorika: trezor</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="sabotage.css">
 </head>
 <body>
   <div class="shell">
     <div id="fx" class="fx hidden"></div>
     <header>
-      <div class="logo">COMBINATORICS.exe // THE VAULT</div>
+      <div class="logo">Kombinatorika: trezor</div>
       <div id="clock" class="clock">--:--</div>
     </header>
 
     <section id="v-load" class="panel">
-      <p class="small">Učitavanje sistema...</p>
+      <p class="small">Učitavanje…</p>
     </section>
 
     <section id="v-cfg" class="panel hidden">
-      <h2>⚠ Firebase nije podešen</h2>
-      <p class="small">Popuni podatke u <code>firebase.js</code> fajlu.</p>
+      <h2>Firebase nije podešen</h2>
+      <p class="small">Popuni podatke u <code>firebase.js</code>.</p>
     </section>
 
     <section id="arsenal" class="panel arsenal hidden">
-      <div class="kicker">Sabotaža // potroši poene na protivnike</div>
+      <h2>Sabotaža</h2>
       <select id="target"></select>
       <div class="atk-grid" id="atkBtns"></div>
       <p class="small" id="atkInfo"></p>
     </section>
 
     <section id="v-join" class="panel hidden">
-      <div class="kicker">Identifikacija tima</div>
-      <h2>Prijavi se za misiju</h2>
-      <p class="small">Unesi naziv svog tima. Svi članovi tima koji igraju sa istog uređaja dele istu sesiju.</p>
+      <h2>Ime tima</h2>
+      <p class="small">Svi članovi tima koji igraju sa istog uređaja dele isti rezultat.</p>
       <div class="group">
-        <input type="text" id="name" placeholder="npr. Alpha / Kombinatoristi" maxlength="24">
+        <input type="text" id="name" placeholder="npr. Kombinatoristi" maxlength="24">
       </div>
-      <button id="joinBtn" class="primary">ULAZ U LOBBY →</button>
+      <button id="joinBtn" class="primary">Uđi u igru</button>
       <p id="joinErr" class="error"></p>
     </section>
 
     <section id="v-wait" class="panel hidden">
-      <div class="kicker" id="team">TIM: --</div>
-      <h2>Čekamo hosta...</h2>
-      <p class="small">Misija još nije počela. Sedi mirno, pripremi papir i olovku.</p>
+      <div class="meta" id="team">Tim: --</div>
+      <h2>Čekamo početak</h2>
+      <p class="small">Igra još nije počela. Pripremi papir i olovku.</p>
     </section>
 
     <section id="v-q" class="panel hidden">
       <div class="flex-between">
-        <div class="kicker" id="qLabel">ZADATAK 01 / 06</div>
-        <div class="small" id="qInfo">Pogrešni pokušaji: 0</div>
+        <div class="meta" id="qLabel">Zadatak 1 / 6</div>
+        <div class="meta" id="qInfo">Pogrešni pokušaji: 0</div>
       </div>
       <div class="pips" id="pips"></div>
       <div class="code-row" id="codeRow"></div>
 
       <div class="card">
-        <div class="topic" id="topic">TEMA</div>
-        <h3 id="qTitle">Naslov</h3>
-        <p id="qText">Tekst zadatka...</p>
+        <div class="topic" id="topic"></div>
+        <h3 id="qTitle"></h3>
+        <p id="qText"></p>
       </div>
 
       <div class="group row">
-        <input type="text" id="ans" placeholder="Unesi rešenje (broj)..." autocomplete="off">
-        <button id="sendBtn" class="primary">POŠALJI</button>
+        <input type="text" id="ans" placeholder="Unesi broj" autocomplete="off">
+        <button id="sendBtn" class="primary">Pošalji</button>
       </div>
       <div id="fb" class="feedback hidden"></div>
 
       <div class="hint-wrap">
-        <button id="hintBtn" class="secondary">ZATRAŽI HINT (−10p)</button>
+        <button id="hintBtn" class="secondary">Hint (−10 poena)</button>
         <p id="hint" class="hint hidden"></p>
       </div>
     </section>
 
     <section id="v-ok" class="panel hidden">
-      <div class="kicker">PROVERA USPEŠNA</div>
-      <h2 id="okTitle">✓ TAČNO</h2>
+      <h2 id="okTitle">Tačno</h2>
       <div class="card">
-        <p id="okExplain">Objašnjenje...</p>
-        <div class="formula" id="okFormula">formula</div>
+        <p id="okExplain"></p>
+        <div class="formula" id="okFormula"></div>
       </div>
-      <button id="nextBtn" class="primary">SLEDEĆI ZADATAK →</button>
+      <button id="nextBtn" class="primary">Sledeći zadatak</button>
     </section>
 
     <section id="v-vault" class="panel hidden">
-      <div class="kicker">ZAVRŠNA FAZA // TREZOR</div>
-      <h2>Unesi šifru trezora</h2>
-      <p class="small">Sve cifre su sakupljene. Sastavi šifru redom od 1. do 6. zadatka.</p>
+      <h2>Šifra trezora</h2>
+      <p class="small">Sve cifre su sakupljene. Upiši ih redom, od prvog do šestog zadatka.</p>
       <div class="code-row" id="vaultRow"></div>
       <div class="group row">
-        <input type="text" id="vaultIn" placeholder="6-cifrena šifra..." maxlength="8" autocomplete="off">
-        <button id="vaultBtn" class="primary">OTKLJUČAJ</button>
+        <input type="text" id="vaultIn" placeholder="6 cifara" maxlength="8" autocomplete="off">
+        <button id="vaultBtn" class="primary">Otključaj</button>
       </div>
       <div id="vfb" class="feedback bad hidden"></div>
     </section>
 
     <section id="v-done" class="panel hidden">
-      <div class="kicker">MISIJA USPEŠNO ZAVRŠENA</div>
-      <h2 style="color:var(--green)">🔓 TREZOR JE OTVOREN!</h2>
+      <h2 class="accent">Trezor je otključan</h2>
       <p id="doneTxt" class="small"></p>
     </section>
 
     <section id="v-end" class="panel hidden">
-      <div class="kicker">KRAJ IGRE</div>
       <h2>Vreme je isteklo</h2>
       <p id="endTxt" class="small"></p>
     </section>
