@@ -68,8 +68,6 @@ export const Q = [
     formula: "P̄(4, 2) = 6!/(4!·2!) = 15"
   }
 ];
-
-// Normalizacija odgovora: skida razmake, tačke i zareze; "0064" -> "64"
 export function norm(s) {
   const t = String(s).replace(/[\s.,]/g, "");
   return /^\d+$/.test(t) ? String(parseInt(t, 10)) : t.toLowerCase();
@@ -82,3 +80,11 @@ export async function sha(str) {
 
 export const checkAnswer = async (q, input) => (await sha(`kombo|${q.id}|${norm(input)}`)) === q.hash;
 export const checkVault = async (input) => (await sha(`kombo|vault|${norm(input)}`)) === VAULT_HASH;
+
+export function build(seed) {
+  return Q;
+}
+
+export async function checkVault(st, input) {
+  return (await sha(`kombo|vault|${norm(input)}`)) === VAULT_HASH;
+}
