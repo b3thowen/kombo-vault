@@ -61,9 +61,22 @@ $("rows").addEventListener("click", async e => {
   try { await deleteDoc(doc(db, "players", id)); } catch (er) { say("Greška: " + er.code, true); }
 });
 
-$("gBtn").onclick = async () => {
-  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
-  catch (e) { say("Prijava nije uspela: " + e.code, true); }
+$("bReset").onclick = async () => {
+  if (!confirm("Ovo briše SVE timove i vraća igru u lobby. Nastaviti?")) return;
+  try {
+    let removed = 0;
+    for (const name of ["players", "attacks"]) {
+      const snap = await getDocs(collection(db, name));
+      if (name === "players") removed = snap.size;
+      for (let i = 0; i < snap.docs.length; i += 400) {
+        const b = writeBatch(db);
+        snap.docs.slice(i, i + 400).forEach(d => b.delete(d.ref));
+        await b.commit();
+      }
+    }
+    await setPhase("lobby");
+    say("Igra resetovana. Obrisano timova: " + removed);
+  } catch (e) { say("Greška pri resetu: " + e.code, true); }
 };
 
 if (!configured) {
