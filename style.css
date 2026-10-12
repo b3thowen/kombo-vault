@@ -1,117 +1,202 @@
-<!DOCTYPE html>
-<html lang="sr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COMBINATORICS.exe — VAULT</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="sabotage.css">
-</head>
-<body>
-  <div class="shell">
-    <div id="fx" class="fx hidden"></div>
-    <header>
-      <div class="logo">COMBINATORICS.exe // THE VAULT</div>
-      <div id="clock" class="clock">--:--</div>
-    </header>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
 
-    <section id="v-load" class="panel">
-      <p class="small">Učitavanje sistema...</p>
-    </section>
+:root{
+  --bg:#e9ecf2;
+  --card:#fbfbfd;
+  --ink:#161b3a;
+  --line:#c3c9d8;
+  --muted:#58617f;
 
-    <section id="v-cfg" class="panel hidden">
-      <h2>⚠ Firebase nije podešen</h2>
-      <p class="small">Popuni podatke u <code>firebase.js</code> fajlu.</p>
-    </section>
+  --blue:#2438b8;
+  --green:#0b7a53;
+  --red:#b00f2e;
+  --gold:#8a5a05;
+  --cyan:#3b4a85;
+  --brass:#f0c05a;
+  --win:#0e1230;
 
-    <section id="arsenal" class="panel arsenal hidden">
-      <div class="kicker">Sabotaža // potroši poene na protivnike</div>
-      <select id="target"></select>
-      <div class="atk-grid" id="atkBtns"></div>
-      <p class="small" id="atkInfo"></p>
-    </section>
+  --serif:"STIX Two Text","Times New Roman",Georgia,serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --stack:3px 3px 0 #dde1ea, 6px 6px 0 #e7eaf0;
+}
 
-    <section id="v-join" class="panel hidden">
-      <div class="kicker">Identifikacija tima</div>
-      <h2>Prijavi se za misiju</h2>
-      <p class="small">Unesi naziv svog tima. Svi članovi tima koji igraju sa istog uređaja dele istu sesiju.</p>
-      <div class="group">
-        <input type="text" id="name" placeholder="npr. Alpha / Kombinatoristi" maxlength="24">
-      </div>
-      <button id="joinBtn" class="primary">ULAZ U LOBBY →</button>
-      <p id="joinErr" class="error"></p>
-    </section>
+*{box-sizing:border-box}
 
-    <section id="v-wait" class="panel hidden">
-      <div class="kicker" id="team">TIM: --</div>
-      <h2>Čekamo hosta...</h2>
-      <p class="small">Misija još nije počela. Sedi mirno, pripremi papir i olovku.</p>
-    </section>
+body{
+  margin:0;min-height:100vh;padding:22px 16px 48px;
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(rgba(36,56,184,.075) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(36,56,184,.075) 1px,transparent 1px),
+    linear-gradient(rgba(36,56,184,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(36,56,184,.04) 1px,transparent 1px);
+  background-size:96px 96px,96px 96px,24px 24px,24px 24px;
+  color:var(--ink);
+  font-family:var(--serif);font-size:18px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
 
-    <section id="v-q" class="panel hidden">
-      <div class="flex-between">
-        <div class="kicker" id="qLabel">ZADATAK 01 / 06</div>
-        <div class="small" id="qInfo">Pogrešni pokušaji: 0</div>
-      </div>
-      <div class="pips" id="pips"></div>
-      <div class="code-row" id="codeRow"></div>
+body::before{
+  content:"1\A 1  1\A 1  2  1\A 1  3  3  1\A 1  4  6  4  1\A 1  5  10  10  5  1\A 1  6  15  20  15  6  1\A 1  7  21  35  35  21  7  1";
+  position:fixed;right:3vw;bottom:4vh;z-index:0;
+  white-space:pre;text-align:center;
+  font:500 15px/1.7 var(--mono);color:var(--blue);opacity:.16;pointer-events:none;
+}
+@media (max-width:1050px){body::before{display:none}}
 
-      <div class="card">
-        <div class="topic" id="topic">TEMA</div>
-        <h3 id="qTitle">Naslov</h3>
-        <p id="qText">Tekst zadatka...</p>
-      </div>
+button,input,select{font:inherit}
+button{cursor:pointer}
+.shell,.lb-shell{position:relative;z-index:1;margin:0 auto}
+.shell{max-width:740px}
+.lb-shell{max-width:1280px}
+.hidden{display:none!important}
 
-      <div class="group row">
-        <input type="text" id="ans" placeholder="Unesi rešenje (broj)..." autocomplete="off">
-        <button id="sendBtn" class="primary">POŠALJI</button>
-      </div>
-      <div id="fb" class="feedback hidden"></div>
+header,.lb-header{
+  display:flex;justify-content:space-between;align-items:stretch;
+  background:var(--card);border:1px solid var(--ink);border-top-width:3px;
+  box-shadow:var(--stack);margin-bottom:26px;
+}
+.logo{padding:11px 16px;font-weight:700;font-size:clamp(18px,3vw,25px);letter-spacing:-.01em;line-height:1.2;align-self:center}
+.clock{
+  display:flex;align-items:center;padding:10px 16px;border-left:1px solid var(--ink);
+  font:500 13px/1.5 var(--mono);color:var(--ink);white-space:nowrap;
+}
+.lb-header>div:first-child{display:flex;flex-direction:column;justify-content:center}
+.phase{padding:0 16px 10px;font:500 13px/1.3 var(--mono);color:var(--muted)}
+.lb-qr-wrap{display:flex;align-items:center;border-left:1px solid var(--ink)}
+.lb-qr-wrap .clock{border-left:0;font-size:clamp(22px,3vw,38px)}
+.qr{margin:8px 0 8px 12px;padding:6px;background:#fff;border:1px solid var(--line);line-height:0}
 
-      <div class="hint-wrap">
-        <button id="hintBtn" class="secondary">ZATRAŽI HINT (−10p)</button>
-        <p id="hint" class="hint hidden"></p>
-      </div>
-    </section>
+.panel{
+  position:relative;
+  background:var(--card);border:1px solid var(--ink);border-radius:1px;
+  padding:clamp(28px,5vw,40px) clamp(18px,4vw,34px) clamp(20px,4vw,32px);
+  margin-bottom:22px;box-shadow:var(--stack);
+}
+.panel::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:10px;opacity:.5;
+  background:
+    linear-gradient(90deg,var(--ink) 1px,transparent 1px) 0 0/40px 10px repeat-x,
+    linear-gradient(90deg,var(--muted) 1px,transparent 1px) 0 0/8px 5px repeat-x;
+  border-bottom:1px solid var(--line);
+}
 
-    <section id="v-ok" class="panel hidden">
-      <div class="kicker">PROVERA USPEŠNA</div>
-      <h2 id="okTitle">✓ TAČNO</h2>
-      <div class="card">
-        <p id="okExplain">Objašnjenje...</p>
-        <div class="formula" id="okFormula">formula</div>
-      </div>
-      <button id="nextBtn" class="primary">SLEDEĆI ZADATAK →</button>
-    </section>
+.kicker,.topic{display:none}
+.kicker#team,.kicker#qLabel{display:block}
 
-    <section id="v-vault" class="panel hidden">
-      <div class="kicker">ZAVRŠNA FAZA // TREZOR</div>
-      <h2>Unesi šifru trezora</h2>
-      <p class="small">Sve cifre su sakupljene. Sastavi šifru redom od 1. do 6. zadatka.</p>
-      <div class="code-row" id="vaultRow"></div>
-      <div class="group row">
-        <input type="text" id="vaultIn" placeholder="6-cifrena šifra..." maxlength="8" autocomplete="off">
-        <button id="vaultBtn" class="primary">OTKLJUČAJ</button>
-      </div>
-      <div id="vfb" class="feedback bad hidden"></div>
-    </section>
+h1{font-size:clamp(38px,8vw,66px);line-height:.98;font-weight:700;letter-spacing:-.025em;margin:10px 0 18px}
+h2{font-size:clamp(25px,4.4vw,34px);line-height:1.15;font-weight:700;letter-spacing:-.012em;margin:4px 0 14px}
+h3{font-size:1.4rem;line-height:1.2;font-weight:700;margin:0 0 10px}
+p{font-size:1.06rem;line-height:1.7;color:var(--ink);max-width:60ch;margin:0 0 1em;hyphens:auto}
+p.small,.small{font-size:1.02rem;color:var(--muted)}
+.accent{color:var(--green)}
+code{font:500 .88em var(--mono);background:#e9ecf5;padding:1px 6px}
+.error{color:var(--red);font-size:.98rem;margin:10px 0 0}
+.error:empty{display:none}
 
-    <section id="v-done" class="panel hidden">
-      <div class="kicker">MISIJA USPEŠNO ZAVRŠENA</div>
-      <h2 style="color:var(--green)">🔓 TREZOR JE OTVOREN!</h2>
-      <p id="doneTxt" class="small"></p>
-    </section>
+#team,#qLabel,#qInfo,#atkInfo,#info,.meta{
+  font:400 13px/1.4 var(--mono);color:var(--muted);font-style:normal;margin:0 0 10px;
+}
+#info{margin:0;text-align:center}
+.flex-between{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
 
-    <section id="v-end" class="panel hidden">
-      <div class="kicker">KRAJ IGRE</div>
-      <h2>Vreme je isteklo</h2>
-      <p id="endTxt" class="small"></p>
-    </section>
+.card{margin:18px 0 22px;padding:2px 0 2px 18px;border-left:3px solid var(--ink)}
+#qText{font-size:1.3rem;line-height:1.65;margin-bottom:.4rem}
 
-  </div>
+.formula{
+  margin:12px 0 4px;padding:12px 0 0;border-top:1px solid var(--line);
+  font-style:italic;font-size:clamp(21px,4vw,30px);overflow-wrap:anywhere;
+}
+.formula::before{content:"\2234\00a0";font-style:normal;color:var(--blue)}
+#okExplain::after{content:"\00a0\220E"}
 
-  <div id="toast" class="toast hidden"></div>
+.hint-wrap{margin-top:18px}
+.hint{margin:12px 0 0;padding-left:12px;border-left:2px solid var(--gold);color:var(--gold);font-style:italic}
 
-  <script type="module" src="game.js"></script>
-</body>
-</html>
+.primary,.secondary,.danger{
+  font:500 15px/1.2 var(--mono);padding:13px 18px;border-radius:3px;
+  border:1px solid var(--ink);transition:transform .08s,box-shadow .08s,background-color .12s;
+}
+.primary{background:var(--blue);border-color:#17228a;color:#fff;box-shadow:0 3px 0 #17228a}
+.primary:hover:not(:disabled){background:#2d44d0}
+.secondary{background:var(--card);color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.secondary:hover:not(:disabled){background:#fff}
+.danger{background:var(--card);color:var(--red);border-color:var(--red);box-shadow:0 3px 0 #e6b6c0}
+.primary:active:not(:disabled),.secondary:active:not(:disabled),.danger:active:not(:disabled){transform:translateY(3px);box-shadow:0 0 0 transparent}
+button:disabled{opacity:.42;cursor:default}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+.pips{display:flex;gap:4px;margin:0 0 20px}
+.pip{flex:1;height:12px;border:1px solid var(--ink);background:repeating-linear-gradient(135deg,transparent 0 3px,var(--line) 3px 4px)}
+.pip.on{background:var(--blue)}
+
+.code,.code-row{display:flex;gap:6px;margin:18px 0;counter-reset:pos}
+.digit{
+  position:relative;flex:1;counter-increment:pos;text-align:center;padding:14px 0 18px;
+  font:700 clamp(26px,7vw,46px)/1 var(--mono);
+  background:var(--win);color:var(--brass);
+  border:2px solid #343c6a;border-radius:3px;
+  box-shadow:inset 0 3px 7px rgba(0,0,0,.65),0 1px 0 #fff;
+}
+.digit::after{content:counter(pos);position:absolute;right:6px;bottom:4px;font:400 11px/1 var(--mono);color:#6a74a6}
+.digit.empty{color:#3b4478}
+
+.group{margin:16px 0}
+.group.row{display:flex;gap:10px;align-items:stretch}
+.group.row input{flex:1;min-width:0}
+.group.row button{flex:none}
+input,select{
+  width:100%;padding:12px 14px;background:#fff;color:var(--ink);
+  border:1px solid var(--ink);border-left:5px solid var(--blue);border-radius:2px;
+  font:500 20px/1.3 var(--mono);
+}
+select{font-size:15px;margin:10px 0}
+::placeholder{color:#8e96b3;font-weight:400}
+#vaultIn{letter-spacing:.3em}
+#vaultIn::placeholder{letter-spacing:0}
+
+.feedback{margin-top:16px;padding:12px 16px;background:#eef0f6;border:1px solid var(--line);border-left:5px solid var(--cyan);font-size:1.02rem}
+.feedback.good{background:#e4f2ec;border-color:#a9d3c1;border-left-color:var(--green)}
+.feedback.bad{background:#f8e6ea;border-color:#e3b3be;border-left-color:var(--red)}
+
+.arsenal h2{font-size:1.25rem;margin-bottom:6px}
+.atk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}
+.atk{display:flex;justify-content:space-between;align-items:baseline;gap:8px;text-align:left;padding:11px 13px}
+.atk small{font-size:12px;color:var(--muted)}
+.atk.shield{border-style:dashed}
+.fx{margin-bottom:14px;padding:9px 14px;background:var(--win);color:var(--brass);border-radius:2px;font:500 13px/1.5 var(--mono)}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:20;
+  max-width:min(92vw,540px);padding:12px 18px;text-align:center;
+  background:var(--win);color:#fff;border-left:5px solid var(--brass);
+  font:400 14px/1.5 var(--mono);box-shadow:4px 4px 0 rgba(22,27,58,.25);
+}
+.blurred{filter:blur(7px);user-select:none}
+
+.lb-body{font-size:20px}
+#feed>*{padding:8px 0;border-bottom:1px solid #e1e5ee;font-size:1rem}
+#feed>*:last-child{border-bottom:0}
+#feed:empty::after{content:"Još nema sabotaža.";color:var(--muted);font-style:italic}
+
+table{width:100%;border-collapse:collapse;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+th,td{padding:11px 8px;text-align:left;border-bottom:1px solid #e1e5ee}
+thead th{font:500 .8rem/1.2 var(--mono);color:var(--muted);border-bottom:1px solid var(--ink)}
+tbody tr:last-child td{border-bottom:0}
+.lb-body td{font-size:clamp(18px,2.1vw,28px)}
+td:first-child,td:nth-child(n+4){font-family:var(--mono);font-weight:500}
+td[colspan]{font-family:var(--serif);font-weight:400}
+table .pips{margin:0;min-width:120px}
+table .pip{height:10px}
+tbody tr:first-child:not(:only-child) td:first-child{box-shadow:inset 4px 0 var(--brass)}
+
+@media (max-width:600px){
+  body{font-size:17px}
+  header,.lb-header{flex-direction:column}
+  .logo{align-self:flex-start}
+  .clock{border-left:0;border-top:1px solid var(--ink)}
+  .panel{overflow-x:auto}
+  .group.row{flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{body{background:#fff}body::before{display:none}.panel,header{box-shadow:none}}
