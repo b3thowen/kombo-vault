@@ -1,14 +1,23 @@
 export const RULES = {
-  base: 100,          // tačno rešen zadatak
-  firstTry: 30,       // bonus ako je prvi pokušaj tačan
-  secondTry: 15,      // bonus ako je drugi pokušaj tačan
-  wrongPenalty: 5,    // svaki pogrešan pokušaj
-  timeMax: 50,        // maksimalni vremenski bonus po zadatku
-  timeWindow: 90,     // sekundi u kojima bonus linearno opada na 0
-  hintPenalty: 10,    // cena jednog hinta
-  vaultWrong: 5,      // pogrešan unos šifre trezora
-  vaultBonus: 100     // otključan sef/trezor
+  base: 100,
+  firstTry: 30,
+  secondTry: 15,
+  wrongPenalty: 5,
+  timeMax: 50,
+  timeWindow: 90,
+  hintPenalty: 10,
+  vaultWrong: 5,
+  vaultBonus: 100
 };
+
+export const ATTACKS = {
+  freeze: { icon: "❄", name: "ZAMRZNI",        cost: 40, dur: 20, desc: "Protivnik ne može da šalje odgovore 20 s" },
+  blur:   { icon: "🌫", name: "ZAMAGLI",        cost: 30, dur: 40, desc: "Tekst zadatka im se zamuti 40 s" },
+  fine:   { icon: "🔥", name: "FIREWALL",       cost: 45, dur: 60, extra: 15, desc: "Svaki njihov pogrešan odgovor košta +15 poena, 60 s" },
+  lock:   { icon: "🔒", name: "BLOKIRAJ HINT",  cost: 20, dur: 90, desc: "Ne mogu da otvore hint 90 s" }
+};
+export const SHIELD = { icon: "🛡", name: "ŠTIT", cost: 35, dur: 45, desc: "Poništava sve napade koji stignu u narednih 45 s" };
+export const COOLDOWN = 12;
 
 export function qPoints(wrong, seconds) {
   const R = RULES;
@@ -18,15 +27,17 @@ export function qPoints(wrong, seconds) {
 }
 
 export function newState(name) {
-  return { name, joinedAt: Date.now(), solved: 0, digits: [], pts: [], wrong: [0, 0, 0, 0, 0, 0],
-           hints: 0, hintQ: [], vaultWrong: 0, qStart: null, finishedAt: null };
+  return { name, seed: (Math.random() * 2 ** 32) >>> 0, joinedAt: Date.now(), solved: 0, digits: [], pts: [],
+           wrong: [0, 0, 0, 0, 0, 0], hints: 0, hintQ: [], vaultWrong: 0, qStart: null, finishedAt: null,
+           spent: 0, fine: 0, sabotages: 0, lastAttack: 0, shieldFrom: 0, shieldUntil: 0 };
 }
 
 export function totalScore(st) {
   const R = RULES;
   const sum = st.pts.reduce((a, b) => a + b, 0);
   const bonus = st.finishedAt ? R.vaultBonus : 0;
-  return Math.max(0, sum - R.hintPenalty * st.hints - R.vaultWrong * st.vaultWrong + bonus);
+  return Math.max(0, sum - R.hintPenalty * st.hints - R.vaultWrong * st.vaultWrong
+                      - (st.spent || 0) - (st.fine || 0) + bonus);
 }
 
 export function attempts(st) {
