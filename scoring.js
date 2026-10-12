@@ -11,10 +11,10 @@ export const RULES = {
 };
 
 export const ATTACKS = {
-  freeze: { icon: "❄", name: "ZAMRZNI",        cost: 40, dur: 20, desc: "Protivnik ne može da šalje odgovore 20 s" },
-  blur:   { icon: "🌫", name: "ZAMAGLI",        cost: 30, dur: 40, desc: "Tekst zadatka im se zamuti 40 s" },
-  fine:   { icon: "🔥", name: "FIREWALL",       cost: 45, dur: 60, extra: 15, desc: "Svaki njihov pogrešan odgovor košta +15 poena, 60 s" },
-  lock:   { icon: "🔒", name: "BLOKIRAJ HINT",  cost: 20, dur: 90, desc: "Ne mogu da otvore hint 90 s" }
+  freeze: { icon: "❄", name: "ZAMRZNI",        cost: 100, dur: 10, desc: "Protivnik ne može da šalje odgovore 20 s" },
+  blur:   { icon: "🌫", name: "ZAMAGLI",        cost: 67, dur: 17, desc: "Tekst zadatka im se zamuti 40 s" },
+  fine:   { icon: "🔥", name: "FIREWALL",       cost: 145, dur: 30, extra: 15, desc: "Svaki njihov pogrešan odgovor košta +15 poena, 30 s" },
+  lock:   { icon: "🔒", name: "BLOKIRAJ HINT",  cost: 200, dur: 90, desc: "Ne mogu da otvore hint 90 s" }
 };
 export const SHIELD = { icon: "🛡", name: "ŠTIT", cost: 35, dur: 45, desc: "Poništava sve napade koji stignu u narednih 45 s" };
 export const COOLDOWN = 12;
