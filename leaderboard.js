@@ -1,16 +1,23 @@
 import { auth, db, configured, signInAnonymously, onAuthStateChanged, collection, doc, onSnapshot } from "./firebase.js";
-import { fmtTime } from "./scoring.js";
+import { fmtTime, ATTACKS } from "./scoring.js";
 
 const $ = id => document.getElementById(id);
 const PH = { lobby: "LOBBY", running: "MISIJA U TOKU", ended: "ZAVRŠENO" };
-let players = [], phase = "lobby", startedAt = null;
+let players = [], phase = "lobby", startedAt = null, attacks = [];
 
-// QR kod koji vodi na igru (index.html u istom folderu)
 const joinUrl = new URL("index.html", location.href).href;
 $("info").textContent = "Priključi se: " + joinUrl;
 try { new QRCode($("qr"), { text: joinUrl, width: 140, height: 140 }); $("qr").classList.remove("hidden"); } catch (e) {}
 
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function drawFeed() {
+  const last = attacks.slice().sort((a, b) => b.at - a.at).slice(0, 6);
+  $("feed").innerHTML = last.length
+    ? last.map(a => { const A = ATTACKS[a.type]; if (!A) return "";
+        return `<div class="feed-row">${A.icon} <b>${esc(a.fromName)}</b> → <b>${esc(a.toName)}</b> <span class="small">${A.name}</span></div>`; }).join("")
+    : '<div class="small">Još nema sabotaža… mir pre oluje.</div>';
+}
 
 function draw() {
   $("phase").textContent = PH[phase] || phase;
@@ -20,7 +27,8 @@ function draw() {
   $("rows").innerHTML = rows.map((p, i) => {
     const pips = Array.from({ length: 6 }, (_, k) => `<i class="${k < p.solved ? "on" : ""}"></i>`).join("");
     const time = p.finishedAt ? "🔓 " + fmtTime(p.finishedAt - p.joinedAt) : "—";
-    return `<tr class="${i === 0 ? "r1" : ""}"><td class="rank">${i + 1}</td><td>${esc(p.name)}</td>` +
+    const sab = p.sab ? ` <span class="small">⚔${p.sab}</span>` : "";
+    return `<tr class="${i === 0 ? "r1" : ""}"><td class="rank">${i + 1}</td><td>${esc(p.name)}${sab}</td>` +
       `<td><div class="bar">${pips}</div></td><td>${p.score}</td><td>${time}</td><td>${p.attempts}</td></tr>`;
   }).join("");
 }
@@ -36,8 +44,11 @@ if (configured) {
     onSnapshot(collection(db, "players"), s => {
       players = s.docs.map(d => { const x = d.data();
         return { name: x.name || "?", score: +x.score || 0, solved: +x.solved || 0, attempts: +x.attempts || 0,
-                 joinedAt: x.joinedAt || 0, finishedAt: x.finishedAt || null }; });
+                 sab: +x.sabotages || 0, joinedAt: x.joinedAt || 0, finishedAt: x.finishedAt || null }; });
       draw();
+    });
+    onSnapshot(collection(db, "attacks"), s => {
+      attacks = s.docs.map(d => d.data()); drawFeed();
     });
     onSnapshot(doc(db, "game", "state"), s => {
       const d = s.exists() ? s.data() : { phase: "lobby" };
