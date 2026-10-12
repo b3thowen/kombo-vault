@@ -1,5 +1,5 @@
 import { auth, db, configured, signInAnonymously, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot, collection, serverTimestamp } from "./firebase.js";
-import { build, checkAnswer, checkVault } from "./questions.js";
+import { Q as questionsList, checkAnswer, checkVault } from "./questions.js";
 import { newState, totalScore, attempts, qPoints, RULES, fmtTime, ATTACKS, SHIELD, COOLDOWN } from "./scoring.js";
 
 const $ = id => document.getElementById(id);
