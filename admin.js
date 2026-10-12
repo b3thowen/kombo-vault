@@ -21,23 +21,19 @@ async function setPhase(phase) {
   }
 }
 
+// ------ NOVO: DOGAĐAJ ZA GOOGLE PRIJAVU ------
+$("gBtn").onclick = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    say("Greška pri prijavi: " + e.message, true);
+  }
+};
+
 $("bLobby").onclick = () => setPhase("lobby");
 $("bStart").onclick = () => setPhase("running");
 $("bStop").onclick = () => setPhase("ended");
-
-$("bReset").onclick = async () => {
-  if (!confirm("Ovo briše SVE timove i vraća igru u lobby. Nastaviti?")) return;
-  try {
-    const snap = await getDocs(collection(db, "players"));
-    for (let i = 0; i < snap.docs.length; i += 400) {
-      const b = writeBatch(db);
-      snap.docs.slice(i, i + 400).forEach(d => b.delete(d.ref));
-      await b.commit();
-    }
-    await setPhase("lobby");
-    say("Igra resetovana. Obrisano timova: " + snap.size);
-  } catch (e) { say("Greška pri resetu: " + e.code, true); }
-};
 
 function listen() {
   unsubs.push(onSnapshot(doc(db, "game", "state"), s => {
