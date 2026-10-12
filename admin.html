@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMBINATORICS.exe — Admin</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">◈ ADMIN PANEL</div>
+    <div class="status"><span id="who">nisi prijavljen</span></div>
+  </header>
+
+  <section id="login" class="panel">
+    <h2>Prijava hosta</h2>
+    <p>Prijavi se Google nalogom čiji je email upisan u <b>firestore.rules</b>. Koristi poseban browser/profil, ne onaj na kome igraš.</p>
+    <div class="actions"><button class="primary" id="gBtn">Prijavi se preko Google-a</button></div>
+  </section>
+
+  <section id="panel" class="panel hidden">
+    <div class="kicker">Stanje igre</div>
+    <h2 id="phase">…</h2>
+    <div class="actions">
+      <button class="secondary" id="bLobby">⏸ LOBBY</button>
+      <button class="primary" id="bStart">▶ START</button>
+      <button class="secondary" id="bStop">■ STOP</button>
+      <button class="danger" id="bReset">⟲ RESET (briše sve timove)</button>
+    </div>
+    <p class="small" id="msg"></p>
+    <h2 style="margin-top:28px">Timovi (<span id="n">0</span>)</h2>
+    <table><thead><tr><th>TIM</th><th>POENI</th><th>ZADACI</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+    <div class="actions"><a class="secondary" style="padding:13px 16px;border:1px solid var(--line);border-radius:10px;color:var(--cyan);text-decoration:none" href="leaderboard.html" target="_blank">Otvori rang-listu →</a></div>
+  </section>
+</div>
+<script type="module" src="admin.js"></script>
+</body>
+</html>
