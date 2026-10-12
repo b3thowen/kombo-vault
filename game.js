@@ -7,7 +7,7 @@ const VIEWS = ["load", "join", "wait", "q", "ok", "vault", "done", "end", "cfg"]
 const show = v => VIEWS.forEach(x => $("v-" + x).classList.toggle("hidden", x !== v));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-let uid = null, st = null, Q = [], phase = "lobby", startedAt = null, justSolved = null, loaded = false;
+let uid = null, st = null, Q = questionsList, phase = "lobby", startedAt = null, justSolved = null, loaded = false;
 let targets = [], incoming = [];
 const seen = new Set();
 
@@ -165,10 +165,11 @@ function renderOk() {
   show("ok");
 }
 
+// ---------- akcije igrača ----------
 $("joinBtn").onclick = async () => {
   const name = $("name").value.trim();
   if (name.length < 2) { $("joinErr").textContent = "Upiši ime tima (bar 2 znaka)."; return; }
-  st = newState(name); Q = build(st.seed);
+  st = newState(name); Q = questionsList;
   await save();
   render();
 };
@@ -207,7 +208,7 @@ $("nextBtn").onclick = () => { justSolved = null; render(); };
 $("vaultBtn").onclick = async () => {
   if (left("freeze") > 0) return;
   const v = $("vaultIn").value.trim(); if (!v) return;
-  if (await checkVault(st, v)) { st.finishedAt = Date.now(); await save(); render(); }
+  if (await checkVault(v)) { st.finishedAt = Date.now(); await save(); render(); }
   else {
     st.vaultWrong++;
     let pen = RULES.vaultWrong;
@@ -236,7 +237,7 @@ setInterval(() => {
     uid = user.uid;
     const snap = await getDoc(doc(db, "players", uid));
     if (snap.exists() && snap.data().st) st = snap.data().st;
-    if (st) Q = build(st.seed);
+    if (st) Q = questionsList;
     loaded = true; render();
 
     onSnapshot(doc(db, "game", "state"), s => {
@@ -244,7 +245,7 @@ setInterval(() => {
       phase = d.phase;
       startedAt = d.startedAt && d.startedAt.toMillis ? d.startedAt.toMillis() : null;
       getDoc(doc(db, "players", uid)).then(p => {
-        if (!p.exists() && st && phase === "lobby") { st = null; Q = []; justSolved = null; incoming = []; seen.clear(); }
+        if (!p.exists() && st && phase === "lobby") { st = null; Q = questionsList; justSolved = null; incoming = []; seen.clear(); }
         render();
       });
     });
