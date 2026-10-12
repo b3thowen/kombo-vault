@@ -59,9 +59,11 @@ function buildArsenal() {
 function renderTargets() {
   const sel = $("target"), prev = sel.value;
   sel.innerHTML = targets.length
-    ? targets.map(t => `<option value="${t.id}">${esc(t.name)} · ${t.score}p · ${t.solved}/6</option>`).join("")
+    ? '<option value="random">🎲 Nasumičan tim</option>' +
+      targets.map(t => `<option value="${t.id}">${esc(t.name)} · ${t.score}p · ${t.solved}/6</option>`).join("")
     : '<option value="">— nema drugih timova —</option>';
-  if (targets.some(t => t.id === prev)) sel.value = prev;
+  if (prev === "random" || targets.some(t => t.id === prev)) sel.value = prev;
+  else if (targets.length) sel.value = "random";
 }
 
 function updateArsenal() {
@@ -87,7 +89,12 @@ async function doAttack(type) {
     await save(); return;
   }
 
-  const A = ATTACKS[type], tid = $("target").value, t = targets.find(x => x.id === tid);
+  const A = ATTACKS[type];
+let tid = $("target").value;
+const t = tid === "random"
+  ? targets[Math.floor(Math.random() * targets.length)]
+  : targets.find(x => x.id === tid);
+if (t) tid = t.id;
   if (!t) return toast("Izaberi tim.");
   if (score < A.cost) return toast("Nemaš dovoljno poena.");
   if (cooldownLeft() > 0) return toast("Cooldown još traje.");
@@ -165,7 +172,6 @@ function renderOk() {
   show("ok");
 }
 
-// ---------- akcije igrača ----------
 $("joinBtn").onclick = async () => {
   const name = $("name").value.trim();
   if (name.length < 2) { $("joinErr").textContent = "Upiši ime tima (bar 2 znaka)."; return; }
