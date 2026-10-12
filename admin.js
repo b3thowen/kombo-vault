@@ -53,14 +53,16 @@ function listen() {
 $("rows").addEventListener("click", async e => {
   const id = e.target.dataset && e.target.dataset.id;
   if (!id || !confirm("Ukloniti ovaj tim?")) return;
-  try { await deleteDoc(doc(db, "players", id)); } catch (er) { say("Greška: " + er.code, true); }
+  try { await deleteDoc(doc(db, "players", id)); }
+  catch (er) { say("Greška pri brisanju: " + er.code + " — email u pravilima se ne poklapa sa prijavljenim nalogom.", true); }
 });
 
 $("bReset").onclick = async () => {
   if (!confirm("Ovo briše SVE timove i vraća igru u lobby. Nastaviti?")) return;
-  try {
-    let removed = 0;
-    for (const name of ["players", "attacks"]) {
+  const errs = [];
+  let removed = 0;
+  for (const name of ["players", "attacks"]) {
+    try {
       const snap = await getDocs(collection(db, name));
       if (name === "players") removed = snap.size;
       for (let i = 0; i < snap.docs.length; i += 400) {
@@ -68,10 +70,11 @@ $("bReset").onclick = async () => {
         snap.docs.slice(i, i + 400).forEach(d => b.delete(d.ref));
         await b.commit();
       }
-    }
-    await setPhase("lobby");
-    say("Igra resetovana. Obrisano timova: " + removed);
-  } catch (e) { say("Greška pri resetu: " + e.code, true); }
+    } catch (e) { errs.push(name + ": " + e.code); }
+  }
+  await setPhase("lobby");
+  if (errs.length) say("Delimična greška → " + errs.join(", "), true);
+  else say("Igra resetovana. Obrisano timova: " + removed);
 };
 
 if (!configured) {
