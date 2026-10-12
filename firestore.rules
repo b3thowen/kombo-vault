@@ -16,7 +16,7 @@ service cloud.firestore {
     }
 
     match /players/{uid} {
-      allow read: if signedIn();
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
 
       allow create, update: if signedIn()
         && request.auth.uid == uid
