@@ -1,88 +1,117 @@
 <!DOCTYPE html>
 <html lang="sr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COMBINATORICS.exe — Trezor</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMBINATORICS.exe — VAULT</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sabotage.css">
 </head>
 <body>
-<div class="shell">
-  <header class="top">
-    <div class="brand">◈ COMBINATORICS.exe</div>
-    <div class="status"><span class="dot"></span><span id="team">TIM: —</span><br><span id="clock">VREME 00:00 · POENI 0</span></div>
-  </header>
+  <div class="shell">
+    <div id="fx" class="fx hidden"></div>
+    <header>
+      <div class="logo">COMBINATORICS.exe // THE VAULT</div>
+      <div id="clock" class="clock">--:--</div>
+    </header>
 
-  <section id="v-load" class="panel center"><p>Povezivanje na sistem…</p></section>
+    <section id="v-load" class="panel">
+      <p class="small">Učitavanje sistema...</p>
+    </section>
 
-  <section id="v-join" class="panel hidden">
-    <div class="kicker">Incident // 007</div>
-    <h1>THE <span class="accent">VAULT</span></h1>
-    <p>Neko je ukrao ispitna pitanja i zaključao ih u digitalni trezor. Rešite 6 zadataka iz kombinatorike, sakupite 6 cifara i otključajte trezor pre ostalih timova.</p>
-    <div class="warning">Cifra se otkriva samo za TAČAN odgovor. Pogrešan odgovor košta poene, brži tim dobija vremenski bonus.</div>
-    <input id="name" maxlength="20" placeholder="Ime tima" autocomplete="off">
-    <div class="actions"><button class="primary" id="joinBtn">▶ UĐI U SISTEM</button></div>
-    <p class="small" id="joinErr"></p>
-  </section>
+    <section id="v-cfg" class="panel hidden">
+      <h2>⚠ Firebase nije podešen</h2>
+      <p class="small">Popuni podatke u <code>firebase.js</code> fajlu.</p>
+    </section>
 
-  <section id="v-wait" class="panel hidden center">
-    <div class="kicker">Lobby</div>
-    <h2>Čekamo da host pokrene misiju…</h2>
-    <p>Ostavi ovu stranicu otvorenom. Čim host klikne START, pitanja se pojavljuju automatski.</p>
-  </section>
+    <section id="arsenal" class="panel arsenal hidden">
+      <div class="kicker">Sabotaža // potroši poene na protivnike</div>
+      <select id="target"></select>
+      <div class="atk-grid" id="atkBtns"></div>
+      <p class="small" id="atkInfo"></p>
+    </section>
 
-  <section id="v-q" class="panel hidden">
-    <div class="meta"><span id="qLabel"></span><span id="qInfo"></span></div>
-    <div class="pips" id="pips"></div>
-    <div class="code" id="codeRow"></div>
-    <div class="kicker" id="topic"></div>
-    <h2 id="qTitle"></h2>
-    <p id="qText"></p>
-    <input id="ans" type="tel" inputmode="numeric" placeholder="Unesi broj" autocomplete="off">
-    <div class="actions">
-      <button class="primary" id="sendBtn">PROVERI ODGOVOR</button>
-      <button class="secondary" id="hintBtn">☼ HINT (−10)</button>
-    </div>
-    <div id="hint" class="hintbox hidden"></div>
-    <div id="fb" class="feedback hidden" aria-live="polite"></div>
-  </section>
+    <section id="v-join" class="panel hidden">
+      <div class="kicker">Identifikacija tima</div>
+      <h2>Prijavi se za misiju</h2>
+      <p class="small">Unesi naziv svog tima. Svi članovi tima koji igraju sa istog uređaja dele istu sesiju.</p>
+      <div class="group">
+        <input type="text" id="name" placeholder="npr. Alpha / Kombinatoristi" maxlength="24">
+      </div>
+      <button id="joinBtn" class="primary">ULAZ U LOBBY →</button>
+      <p id="joinErr" class="error"></p>
+    </section>
 
-  <section id="v-ok" class="panel hidden">
-    <div class="kicker">Cifra otkrivena</div>
-    <h2 class="accent" id="okTitle"></h2>
-    <p id="okExplain"></p>
-    <div class="formula" id="okFormula"></div>
-    <div class="actions"><button class="primary" id="nextBtn">DALJE →</button></div>
-  </section>
+    <section id="v-wait" class="panel hidden">
+      <div class="kicker" id="team">TIM: --</div>
+      <h2>Čekamo hosta...</h2>
+      <p class="small">Misija još nije počela. Sedi mirno, pripremi papir i olovku.</p>
+    </section>
 
-  <section id="v-vault" class="panel hidden center">
-    <div class="kicker">Sve cifre sakupljene</div>
-    <h2>FINALNA AUTENTIFIKACIJA</h2>
-    <p>Unesi šifru od 6 cifara tačnim redosledom.</p>
-    <div class="code" id="vaultRow"></div>
-    <input id="vaultIn" class="big" type="tel" inputmode="numeric" maxlength="6" placeholder="••••••">
-    <div class="actions" style="justify-content:center"><button class="primary" id="vaultBtn">OTKLJUČAJ TREZOR</button></div>
-    <div id="vfb" class="feedback bad hidden"></div>
-  </section>
+    <section id="v-q" class="panel hidden">
+      <div class="flex-between">
+        <div class="kicker" id="qLabel">ZADATAK 01 / 06</div>
+        <div class="small" id="qInfo">Pogrešni pokušaji: 0</div>
+      </div>
+      <div class="pips" id="pips"></div>
+      <div class="code-row" id="codeRow"></div>
 
-  <section id="v-done" class="panel hidden center">
-    <div class="kicker">Autentifikacija završena</div>
-    <h1 class="accent">ACCESS<br>GRANTED ✓</h1>
-    <p id="doneTxt"></p>
-    <p class="small">Pogledaj rang-listu na projektoru.</p>
-  </section>
+      <div class="card">
+        <div class="topic" id="topic">TEMA</div>
+        <h3 id="qTitle">Naslov</h3>
+        <p id="qText">Tekst zadatka...</p>
+      </div>
 
-  <section id="v-end" class="panel hidden center">
-    <div class="kicker">Misija završena</div>
-    <h2>Igra je zaustavljena</h2>
-    <p id="endTxt"></p>
-  </section>
+      <div class="group row">
+        <input type="text" id="ans" placeholder="Unesi rešenje (broj)..." autocomplete="off">
+        <button id="sendBtn" class="primary">POŠALJI</button>
+      </div>
+      <div id="fb" class="feedback hidden"></div>
 
-  <section id="v-cfg" class="panel hidden">
-    <h2 style="color:var(--red)">Firebase nije podešen</h2>
-    <p>Otvori <b>firebase.js</b> i nalepi svoj firebaseConfig (TUTORIAL.md, korak 5).</p>
-  </section>
-</div>
-<script type="module" src="game.js"></script>
+      <div class="hint-wrap">
+        <button id="hintBtn" class="secondary">ZATRAŽI HINT (−10p)</button>
+        <p id="hint" class="hint hidden"></p>
+      </div>
+    </section>
+
+    <section id="v-ok" class="panel hidden">
+      <div class="kicker">PROVERA USPEŠNA</div>
+      <h2 id="okTitle">✓ TAČNO</h2>
+      <div class="card">
+        <p id="okExplain">Objašnjenje...</p>
+        <div class="formula" id="okFormula">formula</div>
+      </div>
+      <button id="nextBtn" class="primary">SLEDEĆI ZADATAK →</button>
+    </section>
+
+    <section id="v-vault" class="panel hidden">
+      <div class="kicker">ZAVRŠNA FAZA // TREZOR</div>
+      <h2>Unesi šifru trezora</h2>
+      <p class="small">Sve cifre su sakupljene. Sastavi šifru redom od 1. do 6. zadatka.</p>
+      <div class="code-row" id="vaultRow"></div>
+      <div class="group row">
+        <input type="text" id="vaultIn" placeholder="6-cifrena šifra..." maxlength="8" autocomplete="off">
+        <button id="vaultBtn" class="primary">OTKLJUČAJ</button>
+      </div>
+      <div id="vfb" class="feedback bad hidden"></div>
+    </section>
+
+    <section id="v-done" class="panel hidden">
+      <div class="kicker">MISIJA USPEŠNO ZAVRŠENA</div>
+      <h2 style="color:var(--green)">🔓 TREZOR JE OTVOREN!</h2>
+      <p id="doneTxt" class="small"></p>
+    </section>
+
+    <section id="v-end" class="panel hidden">
+      <div class="kicker">KRAJ IGRE</div>
+      <h2>Vreme je isteklo</h2>
+      <p id="endTxt" class="small"></p>
+    </section>
+
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module" src="game.js"></script>
 </body>
 </html>
