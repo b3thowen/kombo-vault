@@ -11,8 +11,8 @@ export const RULES = {
 };
 
 export const ATTACKS = {
-  freeze: { icon: "❄", name: "ZAMRZNI",        cost: 100, dur: 10, desc: "Protivnik ne može da šalje odgovore 20 s" },
-  blur:   { icon: "🌫", name: "ZAMAGLI",        cost: 67, dur: 17, desc: "Tekst zadatka im se zamuti 40 s" },
+  freeze: { icon: "❄", name: "ZAMRZNI",        cost: 100, dur: 10, desc: "Protivnik ne može da šalje odgovore 10 s" },
+  blur:   { icon: "🌫", name: "ZAMAGLI",        cost: 67, dur: 17, desc: "Tekst zadatka im se zamuti 17 s" },
   fine:   { icon: "🔥", name: "FIREWALL",       cost: 145, dur: 30, extra: 15, desc: "Svaki njihov pogrešan odgovor košta +15 poena, 30 s" },
   lock:   { icon: "🔒", name: "BLOKIRAJ HINT",  cost: 200, dur: 90, desc: "Ne mogu da otvore hint 90 s" }
 };
