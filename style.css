@@ -1,43 +1,117 @@
-:root{--bg:#070b10;--line:#1e3940;--green:#65ffb2;--cyan:#67e8f9;--muted:#8ba3ad;--red:#ff657a;--gold:#ffd166}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#10232b 0%,var(--bg) 58%);color:#e7f5f4;font-family:Consolas,"Courier New",monospace;min-height:100vh;padding:18px}
-button{font:inherit;cursor:pointer}
-.shell{max-width:860px;margin:auto}
-.top{display:flex;justify-content:space-between;gap:12px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0 14px;margin-bottom:18px}
-.brand{color:var(--green);letter-spacing:2px;font-weight:bold;font-size:clamp(16px,3vw,24px)}
-.status{color:var(--muted);font-size:12px;text-align:right}
-.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 10px var(--green)}
-.panel{background:linear-gradient(145deg,rgba(13,21,29,.97),rgba(8,15,21,.97));border:1px solid var(--line);border-radius:16px;padding:clamp(18px,4vw,32px);box-shadow:0 20px 70px #0008;margin-bottom:16px}
-.kicker{color:var(--cyan);font-size:12px;letter-spacing:2px;text-transform:uppercase}
-h1{font-size:clamp(28px,6vw,52px);line-height:1.05;margin:12px 0;color:#f4ffff}
-h2{font-size:clamp(20px,4vw,30px);margin:10px 0 12px}
-p{line-height:1.6;color:#bfd0d5}
-.accent{color:var(--green)}
-.warning{border-left:3px solid var(--gold);padding:10px 14px;background:#ffd1660c;color:#e8d9b4;margin:18px 0}
-.primary,.secondary,.danger{border:1px solid var(--line);border-radius:10px;padding:13px 16px;transition:.18s}
-.primary{background:var(--green);color:#04110b;font-weight:bold;border-color:var(--green)}
-.primary:hover{filter:brightness(1.08)}
-.secondary{background:transparent;color:var(--cyan)}
-.secondary:hover{border-color:var(--green)}
-.danger{background:transparent;color:var(--red);border-color:#ff657a66}
-button:disabled{opacity:.45;cursor:default}
-.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-.meta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px;margin-bottom:10px;flex-wrap:wrap}
-.pips{display:flex;gap:6px;margin:0 0 18px}
-.pip{flex:1;height:8px;border-radius:6px;background:#1b2b32}
-.pip.on{background:var(--green);box-shadow:0 0 8px #65ffb266}
-input[type=text],input[type=tel],input:not([type]){background:#050a0e;color:var(--green);border:1px solid var(--line);border-radius:10px;font:inherit;font-size:22px;padding:13px;width:100%}
-input.big{font-size:32px;letter-spacing:8px;text-align:center}
-.feedback{padding:14px;border:1px solid var(--line);border-radius:10px;margin-top:14px}
-.feedback.good{border-color:#65ffb277}.feedback.bad{border-color:#ff657a77}
-.formula{font-size:clamp(20px,4vw,30px);color:var(--green);padding:10px 0;overflow-wrap:anywhere}
-.hidden{display:none!important}
-.code{display:flex;gap:6px;margin:16px 0}
-.digit{flex:1;text-align:center;font-size:clamp(24px,6vw,40px);padding:10px 0;border:1px solid var(--line);border-radius:9px;color:var(--green);background:#050a0e}
-.digit.empty{color:#2a4048}
-.small{font-size:12px;color:var(--muted)}
-.center{text-align:center}
-.hintbox{margin-top:12px;color:var(--gold);font-size:14px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--muted);font-size:12px;letter-spacing:1px;font-weight:normal}
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMBINATORICS.exe — VAULT</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sabotage.css">
+</head>
+<body>
+  <div class="shell">
+    <div id="fx" class="fx hidden"></div>
+    <header>
+      <div class="logo">COMBINATORICS.exe // THE VAULT</div>
+      <div id="clock" class="clock">--:--</div>
+    </header>
+
+    <section id="v-load" class="panel">
+      <p class="small">Učitavanje sistema...</p>
+    </section>
+
+    <section id="v-cfg" class="panel hidden">
+      <h2>⚠ Firebase nije podešen</h2>
+      <p class="small">Popuni podatke u <code>firebase.js</code> fajlu.</p>
+    </section>
+
+    <section id="arsenal" class="panel arsenal hidden">
+      <div class="kicker">Sabotaža // potroši poene na protivnike</div>
+      <select id="target"></select>
+      <div class="atk-grid" id="atkBtns"></div>
+      <p class="small" id="atkInfo"></p>
+    </section>
+
+    <section id="v-join" class="panel hidden">
+      <div class="kicker">Identifikacija tima</div>
+      <h2>Prijavi se za misiju</h2>
+      <p class="small">Unesi naziv svog tima. Svi članovi tima koji igraju sa istog uređaja dele istu sesiju.</p>
+      <div class="group">
+        <input type="text" id="name" placeholder="npr. Alpha / Kombinatoristi" maxlength="24">
+      </div>
+      <button id="joinBtn" class="primary">ULAZ U LOBBY →</button>
+      <p id="joinErr" class="error"></p>
+    </section>
+
+    <section id="v-wait" class="panel hidden">
+      <div class="kicker" id="team">TIM: --</div>
+      <h2>Čekamo hosta...</h2>
+      <p class="small">Misija još nije počela. Sedi mirno, pripremi papir i olovku.</p>
+    </section>
+
+    <section id="v-q" class="panel hidden">
+      <div class="flex-between">
+        <div class="kicker" id="qLabel">ZADATAK 01 / 06</div>
+        <div class="small" id="qInfo">Pogrešni pokušaji: 0</div>
+      </div>
+      <div class="pips" id="pips"></div>
+      <div class="code-row" id="codeRow"></div>
+
+      <div class="card">
+        <div class="topic" id="topic">TEMA</div>
+        <h3 id="qTitle">Naslov</h3>
+        <p id="qText">Tekst zadatka...</p>
+      </div>
+
+      <div class="group row">
+        <input type="text" id="ans" placeholder="Unesi rešenje (broj)..." autocomplete="off">
+        <button id="sendBtn" class="primary">POŠALJI</button>
+      </div>
+      <div id="fb" class="feedback hidden"></div>
+
+      <div class="hint-wrap">
+        <button id="hintBtn" class="secondary">ZATRAŽI HINT (−10p)</button>
+        <p id="hint" class="hint hidden"></p>
+      </div>
+    </section>
+
+    <section id="v-ok" class="panel hidden">
+      <div class="kicker">PROVERA USPEŠNA</div>
+      <h2 id="okTitle">✓ TAČNO</h2>
+      <div class="card">
+        <p id="okExplain">Objašnjenje...</p>
+        <div class="formula" id="okFormula">formula</div>
+      </div>
+      <button id="nextBtn" class="primary">SLEDEĆI ZADATAK →</button>
+    </section>
+
+    <section id="v-vault" class="panel hidden">
+      <div class="kicker">ZAVRŠNA FAZA // TREZOR</div>
+      <h2>Unesi šifru trezora</h2>
+      <p class="small">Sve cifre su sakupljene. Sastavi šifru redom od 1. do 6. zadatka.</p>
+      <div class="code-row" id="vaultRow"></div>
+      <div class="group row">
+        <input type="text" id="vaultIn" placeholder="6-cifrena šifra..." maxlength="8" autocomplete="off">
+        <button id="vaultBtn" class="primary">OTKLJUČAJ</button>
+      </div>
+      <div id="vfb" class="feedback bad hidden"></div>
+    </section>
+
+    <section id="v-done" class="panel hidden">
+      <div class="kicker">MISIJA USPEŠNO ZAVRŠENA</div>
+      <h2 style="color:var(--green)">🔓 TREZOR JE OTVOREN!</h2>
+      <p id="doneTxt" class="small"></p>
+    </section>
+
+    <section id="v-end" class="panel hidden">
+      <div class="kicker">KRAJ IGRE</div>
+      <h2>Vreme je isteklo</h2>
+      <p id="endTxt" class="small"></p>
+    </section>
+
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>
