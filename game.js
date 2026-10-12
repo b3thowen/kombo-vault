@@ -1,4 +1,4 @@
-import { auth, db, configured, signInAnonymously, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot, collection, serverTimestamp } from "./firebase.js";
+import { auth, db, configured, signInAnonymously, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot, collection, deleteDoc, serverTimestamp } from "./firebase.js";
 import { Q as questionsList, checkAnswer, checkVault } from "./questions.js";
 import { newState, totalScore, attempts, qPoints, RULES, fmtTime, ATTACKS, SHIELD, COOLDOWN } from "./scoring.js";
 
@@ -7,7 +7,7 @@ const VIEWS = ["load", "join", "wait", "q", "ok", "vault", "done", "end", "cfg"]
 const show = v => VIEWS.forEach(x => $("v-" + x).classList.toggle("hidden", x !== v));
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-let uid = null, st = null, Q = questionsList, phase = "lobby", startedAt = null, justSolved = null, loaded = false;
+let uid = null, st = null, Q = questionsList, phase = "lobby", realPhase = "lobby", startedAt = null, justSolved = null, loaded = false;
 let targets = [], incoming = [];
 const seen = new Set();
 
@@ -20,6 +20,54 @@ async function save() {
   };
   try { await setDoc(doc(db, "players", uid), data); }
   catch (e) { console.error(e); $("clock").textContent = "⚠ greška pri slanju rezultata"; }
+}
+
+
+const BOT_NAMES = ["🤖 Bot Alfa", "🤖 Bot Beta", "🤖 Bot Gama", "🤖 Bot Delta"];
+let bots = [], botTimer = null;
+const botId = n => "bot_" + uid.slice(0, 6) + "_" + n;
+
+function botSave(b) {
+  setDoc(doc(db, "players", b.id), {
+    name: b.name, score: b.score, solved: b.solved, attempts: b.attempts, hints: 0, sabotages: b.sab,
+    joinedAt: b.joinedAt, finishedAt: b.finishedAt, updatedAt: serverTimestamp()
+  }).catch(e => console.error("bot", e));
+}
+
+function startBots() {
+  stopBots();
+  const now = Date.now();
+  bots = BOT_NAMES.map((name, n) => ({ id: botId(n), name, n, score: 0, solved: 0, attempts: 0, sab: 0,
+    joinedAt: now, finishedAt: null, next: now + (10 + n * 6) * 1000 }));
+  bots.forEach(botSave);
+  botTimer = setInterval(botTick, 1000);
+}
+
+function stopBots() {
+  clearInterval(botTimer); botTimer = null;
+  if (uid) BOT_NAMES.forEach((_, n) => deleteDoc(doc(db, "players", botId(n))).catch(() => {}));
+  bots = [];
+}
+
+function botTick() {
+  const now = Date.now();
+  for (const b of bots) {
+    if (b.finishedAt || now < b.next) continue;
+    b.next = now + (15 + b.n * 7 + Math.random() * 15) * 1000;
+    b.attempts++;
+    if (Math.random() < 0.25) b.score = Math.max(0, b.score - RULES.wrongPenalty);
+    else {
+      b.solved++; b.score += RULES.base + (Math.random() < 0.6 ? RULES.firstTry : 0);
+      if (b.solved >= Q.length) { b.finishedAt = now; b.score += RULES.vaultBonus; }
+    }
+    if (!b.finishedAt && st && !st.finishedAt && Math.random() < 0.2) {
+      const types = Object.keys(ATTACKS), type = types[Math.floor(Math.random() * types.length)];
+      setDoc(doc(collection(db, "attacks")), { from: b.id, fromName: b.name, to: uid, toName: st.name, type, at: now })
+        .catch(e => console.error("bot attack", e));
+      b.sab++;
+    }
+    botSave(b);
+  }
 }
 
 let toastTimer;
@@ -176,6 +224,8 @@ $("joinBtn").onclick = async () => {
   const name = $("name").value.trim();
   if (name.length < 2) { $("joinErr").textContent = "Upiši ime tima (bar 2 znaka)."; return; }
   st = newState(name); Q = questionsList;
+  st.test = $("testMode").checked;
+  if (st.test) { phase = "running"; startBots(); }
   await save();
   render();
 };
@@ -244,14 +294,16 @@ setInterval(() => {
     const snap = await getDoc(doc(db, "players", uid));
     if (snap.exists() && snap.data().st) st = snap.data().st;
     if (st) Q = questionsList;
+    if (st && st.test) { phase = "running"; if (!st.finishedAt) startBots(); }
     loaded = true; render();
 
     onSnapshot(doc(db, "game", "state"), s => {
       const d = s.exists() ? s.data() : { phase: "lobby" };
-      phase = d.phase;
+      realPhase = d.phase;
+      phase = st && st.test ? "running" : realPhase;
       startedAt = d.startedAt && d.startedAt.toMillis ? d.startedAt.toMillis() : null;
       getDoc(doc(db, "players", uid)).then(p => {
-        if (!p.exists() && st && phase === "lobby") { st = null; Q = questionsList; justSolved = null; incoming = []; seen.clear(); }
+        if (!p.exists() && st && realPhase === "lobby") { stopBots(); st = null; phase = "lobby"; Q = questionsList; justSolved = null; incoming = []; seen.clear(); }
         render();
       });
     });
