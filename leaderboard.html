@@ -1,36 +1,54 @@
 <!DOCTYPE html>
 <html lang="sr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COMBINATORICS.exe — Rang-lista</title>
-<link rel="stylesheet" href="style.css">
-<style>
-body{padding:24px 36px}.shell{max-width:1200px}
-td,th{font-size:clamp(16px,2.2vw,26px)}
-.rank{width:60px;color:var(--cyan)}
-.r1 td{color:var(--gold);font-weight:bold}
-.bar{display:flex;gap:4px;min-width:140px}.bar i{flex:1;height:12px;border-radius:4px;background:#1b2b32}.bar i.on{background:var(--green)}
-.top-row{display:flex;justify-content:space-between;align-items:center;gap:20px}
-#qr{background:#fff;padding:8px;border-radius:8px;width:fit-content}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMBINATORICS.exe — LEADERBOARD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sabotage.css">
 </head>
-<body>
-<div class="shell">
-  <header class="top">
-    <div class="brand" style="font-size:clamp(22px,3.5vw,40px)">◈ COMBINATORICS.exe // RANG-LISTA</div>
-    <div class="status" style="font-size:clamp(14px,2vw,22px)"><span class="dot"></span><span id="phase">…</span> · <span id="clock">00:00</span></div>
-  </header>
-  <div class="top-row">
-    <p id="info" class="small" style="font-size:16px"></p>
-    <div id="qr" class="hidden"></div>
+<body class="lb-body">
+  <div class="lb-shell">
+    <header class="lb-header">
+      <div>
+        <div class="logo">COMBINATORICS.exe // LIVE RANKING</div>
+        <div id="phase" class="phase">LOBBY</div>
+      </div>
+      <div class="lb-qr-wrap">
+        <div id="qr" class="qr hidden"></div>
+        <div id="clock" class="clock">--:--</div>
+      </div>
+    </header>
+
+    <div class="panel" style="margin-bottom:14px">
+      <div id="info" class="small" style="text-align:center">Učitavanje...</div>
+    </div>
+
+    <div class="panel" style="margin-bottom:14px">
+      <div class="kicker">Uživo // sabotaže</div>
+      <div id="feed"></div>
+    </div>
+
+    <div class="panel">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px">#</th>
+            <th>TIM</th>
+            <th style="width:200px">ZADACI</th>
+            <th style="width:100px">POENI</th>
+            <th style="width:120px">VREME</th>
+            <th style="width:90px">POKUŠaji</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr><td colspan="6" class="small">Čekamo timove...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="panel"><table>
-    <thead><tr><th>#</th><th>TIM</th><th>PROGRES</th><th>POENI</th><th>VREME</th><th>POKUŠAJI</th></tr></thead>
-    <tbody id="rows"><tr><td colspan="6" class="small">Čekamo timove…</td></tr></tbody>
-  </table></div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script type="module" src="leaderboard.js"></script>
+
+  <script src="qrcode.min.js"></script>
+  <script type="module" src="leaderboard.js"></script>
 </body>
 </html>
