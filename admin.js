@@ -44,7 +44,7 @@ function listen() {
     $("n").textContent = rows.length;
     $("rows").innerHTML = rows.length ? rows.map(p => {
       const fin = p.finishedAt ? " 🔓 " + fmtTime(p.finishedAt - p.joinedAt) : "";
-      return `<tr><td>${esc(p.name || "?")}${fin}</td><td>${p.score || 0}</td><td>${p.solved || 0}/6</td>` +
+      return `<tr><td>${esc(p.name || "?")}${fin}</td><td>${p.score || 0}</td><td>${p.solved || 0}/${p.total || 6}</td>` +
              `<td><button class="danger" data-id="${p.id}" style="padding:6px 10px">✕</button></td></tr>`;
     }).join("") : '<tr><td colspan="4" class="small">Nema timova.</td></tr>';
   }));
