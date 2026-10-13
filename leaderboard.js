@@ -21,13 +21,13 @@ function drawFeed() {
 
 function draw() {
   $("phase").textContent = PH[phase] || phase;
-  const rows = players.slice().sort((a, b) =>
+  const rows = players.filter(p => !p.solo).sort((a, b) =>
     b.score - a.score || (a.finishedAt || Infinity) - (b.finishedAt || Infinity) || a.joinedAt - b.joinedAt);
   if (!rows.length) { $("rows").innerHTML = '<tr><td colspan="6" class="small">Čekamo timove…</td></tr>'; return; }
   $("rows").innerHTML = rows.map((p, i) => {
-    const pips = Array.from({ length: 6 }, (_, k) => `<i class="${k < p.solved ? "on" : ""}"></i>`).join("");
+    const pips = Array.from({ length: p.total }, (_, k) => `<i class="${k < p.solved ? "on" : ""}"></i>`).join("");
     const time = p.finishedAt ? "🔓 " + fmtTime(p.finishedAt - p.joinedAt) : "—";
-    const sab = p.sab ? ` <span class="small">⚔${p.sab}</span>` : "";
+    const sab = (p.sab ? ` <span class="small">⚔${p.sab}</span>` : "") + (p.mode === "levels" ? ` <span class="small">nivo ${p.level}</span>` : "");
     return `<tr class="${i === 0 ? "r1" : ""}"><td class="rank">${i + 1}</td><td>${esc(p.name)}${sab}</td>` +
       `<td><div class="bar">${pips}</div></td><td>${p.score}</td><td>${time}</td><td>${p.attempts}</td></tr>`;
   }).join("");
@@ -44,7 +44,8 @@ if (configured) {
     onSnapshot(collection(db, "players"), s => {
       players = s.docs.map(d => { const x = d.data();
         return { name: x.name || "?", score: +x.score || 0, solved: +x.solved || 0, attempts: +x.attempts || 0,
-                 sab: +x.sabotages || 0, joinedAt: x.joinedAt || 0, finishedAt: x.finishedAt || null }; });
+                 sab: +x.sabotages || 0, joinedAt: x.joinedAt || 0, finishedAt: x.finishedAt || null,
+                 total: +x.total || 6, level: +x.level || 1, mode: x.mode || "vault", solo: !!x.solo }; });
       draw();
     });
     onSnapshot(collection(db, "attacks"), s => {
