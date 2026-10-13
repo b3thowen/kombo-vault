@@ -36,6 +36,10 @@
       <div class="group">
         <input type="text" id="name" placeholder="npr. Kombinatoristi" maxlength="24">
       </div>
+      <p class="small" style="margin-bottom:6px"><b>Način igre:</b></p>
+      <label class="small"><input type="radio" name="mode" id="modeVault" checked style="width:auto;margin-right:8px">Trezor: 6 zadataka, svaka tačna daje cifru šifre</label><br>
+      <label class="small"><input type="radio" name="mode" id="modeLevels" style="width:auto;margin-right:8px">Nivoi: 4 nivoa, sledeći se otključava tek kad završiš prethodni</label><br><br>
+      <label class="small"><input type="checkbox" id="solo" style="width:auto;margin-right:8px">Solo: igram sam, bez čekanja admina i bez rang-liste</label><br>
       <label class="small"><input type="checkbox" id="testMode" style="width:auto;margin-right:8px">Test režim: igra odmah počinje i igraš protiv 4 bota (bez admina)</label>
       <div class="actions"><button id="joinBtn" class="primary">Uđi u igru</button></div>
       <p id="joinErr" class="error"></p>
@@ -52,6 +56,7 @@
         <div class="meta" id="qLabel">Zadatak 1 / 6</div>
         <div class="meta" id="qInfo">Pogrešni pokušaji: 0</div>
       </div>
+      <div id="lvls" class="small hidden" style="margin-bottom:10px"></div>
       <div class="pips" id="pips"></div>
       <div class="code-row" id="codeRow"></div>
 
@@ -62,9 +67,10 @@
       </div>
 
       <div class="group row">
-        <input type="text" id="ans" placeholder="Unesi broj" autocomplete="off">
+        <input type="text" id="ans" placeholder="Broj ili izraz, npr. C(7,3)" autocomplete="off">
         <button id="sendBtn" class="primary">Pošalji</button>
       </div>
+      <p class="small" style="margin:8px 0 0">Možeš uneti i izraz: <code>C(7,3)</code>, <code>7!/(3!*4!)</code>, <code>4^3</code>, <code>P(8,3)</code>, <code>7*6*5/6</code>.</p>
       <div id="fb" class="feedback hidden"></div>
 
       <div class="hint-wrap">
