@@ -28,7 +28,7 @@ export function qPoints(wrong, seconds) {
 
 export function newState(name) {
   return { name, seed: (Math.random() * 2 ** 32) >>> 0, joinedAt: Date.now(), solved: 0, digits: [], pts: [],
-           wrong: [0, 0, 0, 0, 0, 0], hints: 0, hintQ: [], vaultWrong: 0, qStart: null, finishedAt: null,
+           wrong: Array(20).fill(0), hints: 0, hintQ: [], vaultWrong: 0, qStart: null, finishedAt: null,
            spent: 0, fine: 0, sabotages: 0, lastAttack: 0, shieldFrom: 0, shieldUntil: 0 };
 }
 
