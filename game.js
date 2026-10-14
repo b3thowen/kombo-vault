@@ -72,6 +72,17 @@ function botTick() {
   }
 }
 
+// ---------- NOVA PARTIJA (samo solo i test režim, bez admina) ----------
+async function newGame() {
+  if (!st || !(st.test || st.solo)) return;
+  if (!st.finishedAt && !confirm("Početi ispočetka? Trenutni napredak se briše.")) return;
+  stopBots();                                                     // briše botove sa rang-liste
+  try { await deleteDoc(doc(db, "players", uid)); } catch (e) { console.error(e); }
+  st = null; Q = []; phase = realPhase; justSolved = null; incoming = []; seen.clear();
+  render();                                                       // vraća na ekran za ulazak
+}
+document.querySelectorAll(".newgame").forEach(b => { b.onclick = newGame; });
+
 let toastTimer;
 function toast(t) {
   const el = $("toast"); el.textContent = t; el.classList.remove("hidden");
@@ -180,6 +191,7 @@ function render() {
   renderView();
   const armed = loaded && st && !st.finishedAt && phase === "running" && !st.solo;
   $("arsenal").classList.toggle("hidden", !armed);
+  document.querySelectorAll(".newgame").forEach(b => b.classList.toggle("hidden", !(st && (st.test || st.solo))));
   applyEffects();
 }
 
