@@ -30,7 +30,7 @@ const botId = n => "bot_" + uid.slice(0, 6) + "_" + n;
 
 function botSave(b) {
   setDoc(doc(db, "players", b.id), {
-    name: b.name, score: b.score, solved: b.solved, total: Q.length, attempts: b.attempts, hints: 0, sabotages: b.sab,
+    name: b.name, score: b.score, solved: b.solved, total: Q.length, mode: (st && st.mode) || "vault", attempts: b.attempts, hints: 0, sabotages: b.sab,
     joinedAt: b.joinedAt, finishedAt: b.finishedAt, updatedAt: serverTimestamp()
   }).catch(e => console.error("bot", e));
 }
@@ -61,6 +61,7 @@ function botTick() {
       b.solved++; b.score += RULES.base + (Math.random() < 0.6 ? RULES.firstTry : 0);
       if (b.solved >= Q.length) { b.finishedAt = now; b.score += RULES.vaultBonus; }
     }
+    // povremeno bot napadne igrača koji testira
     if (!b.finishedAt && st && !st.finishedAt && Math.random() < 0.2) {
       const types = Object.keys(ATTACKS), type = types[Math.floor(Math.random() * types.length)];
       setDoc(doc(collection(db, "attacks")), { from: b.id, fromName: b.name, to: uid, toName: st.name, type, at: now })
