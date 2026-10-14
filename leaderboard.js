@@ -19,17 +19,29 @@ function drawFeed() {
     : '<div class="small">Još nema sabotaža… mir pre oluje.</div>';
 }
 
+const MODE_NAME = { vault: "TREZOR", levels: "NIVOI" };
+
+function better(a, b) {
+  return b.score - a.score || b.solved - a.solved || a.attempts - b.attempts ||
+         (a.finishedAt || Infinity) - (b.finishedAt || Infinity) || a.joinedAt - b.joinedAt;
+}
+
+function rowHtml(p, i) {
+  const pips = Array.from({ length: p.total }, (_, k) => `<i class="${k < p.solved ? "on" : ""}"></i>`).join("");
+  const time = p.finishedAt ? "🔓 " + fmtTime(p.finishedAt - p.joinedAt) : "—";
+  const sab = (p.sab ? ` <span class="small">⚔${p.sab}</span>` : "") + (p.mode === "levels" ? ` <span class="small">nivo ${p.level}</span>` : "");
+  return `<tr class="${i === 0 ? "r1" : ""}"><td class="rank">${i + 1}</td><td>${esc(p.name)}${sab}</td>` +
+    `<td><div class="bar">${pips}</div></td><td>${p.score}</td><td>${time}</td><td>${p.attempts}</td></tr>`;
+}
+
 function draw() {
   $("phase").textContent = PH[phase] || phase;
-  const rows = players.filter(p => !p.solo).sort((a, b) =>
-    b.score - a.score || (a.finishedAt || Infinity) - (b.finishedAt || Infinity) || a.joinedAt - b.joinedAt);
-  if (!rows.length) { $("rows").innerHTML = '<tr><td colspan="6" class="small">Čekamo timove…</td></tr>'; return; }
-  $("rows").innerHTML = rows.map((p, i) => {
-    const pips = Array.from({ length: p.total }, (_, k) => `<i class="${k < p.solved ? "on" : ""}"></i>`).join("");
-    const time = p.finishedAt ? "🔓 " + fmtTime(p.finishedAt - p.joinedAt) : "—";
-    const sab = (p.sab ? ` <span class="small">⚔${p.sab}</span>` : "") + (p.mode === "levels" ? ` <span class="small">nivo ${p.level}</span>` : "");
-    return `<tr class="${i === 0 ? "r1" : ""}"><td class="rank">${i + 1}</td><td>${esc(p.name)}${sab}</td>` +
-      `<td><div class="bar">${pips}</div></td><td>${p.score}</td><td>${time}</td><td>${p.attempts}</td></tr>`;
+  const list = players.filter(p => !p.solo);
+  if (!list.length) { $("rows").innerHTML = '<tr><td colspan="6" class="small">Čekamo timove…</td></tr>'; return; }
+  const modes = ["vault", "levels"].filter(m => list.some(p => p.mode === m));
+  $("rows").innerHTML = modes.map(m => {
+    const head = modes.length > 1 ? `<tr><td colspan="6" class="small"><b>${MODE_NAME[m]}</b></td></tr>` : "";
+    return head + list.filter(p => p.mode === m).sort(better).map(rowHtml).join("");
   }).join("");
 }
 
