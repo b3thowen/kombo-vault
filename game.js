@@ -22,6 +22,15 @@ async function save() {
   };
   try { await setDoc(doc(db, "players", uid), data); }
   catch (e) { console.error(e); $("clock").textContent = "⚠ greška pri slanju rezultata"; }
+
+  const kind = st.solo ? "solo" : st.test ? "test" : "group";
+  const qs = Q.map((q, i) => ({ t: q.title, x: q.text, a: q.answer, p: st.pts[i] || 0, w: st.wrong[i] || 0,
+                                h: st.hintQ.includes(i), s: i < st.solved }));
+  setDoc(doc(db, "history", uid + "_" + st.joinedAt), {
+    uid, name: st.name, kind, mode: st.mode || "vault", score: totalScore(st), solved: st.solved, total: Q.length,
+    attempts: attempts(st), hints: st.hints, vaultWrong: st.vaultWrong || 0, spent: st.spent || 0,
+    sabotages: st.sabotages || 0, joinedAt: st.joinedAt, finishedAt: st.finishedAt, qs, updatedAt: serverTimestamp()
+  }).catch(() => {});
 }
 
 const BOT_NAMES = ["🤖 Bot Alfa", "🤖 Bot Beta", "🤖 Bot Gama", "🤖 Bot Delta"];
@@ -61,7 +70,6 @@ function botTick() {
       b.solved++; b.score += RULES.base + (Math.random() < 0.6 ? RULES.firstTry : 0);
       if (b.solved >= Q.length) { b.finishedAt = now; b.score += RULES.vaultBonus; }
     }
-    // povremeno bot napadne igrača koji testira
     if (!b.finishedAt && st && !st.finishedAt && Math.random() < 0.2) {
       const types = Object.keys(ATTACKS), type = types[Math.floor(Math.random() * types.length)];
       setDoc(doc(collection(db, "attacks")), { from: b.id, fromName: b.name, to: uid, toName: st.name, type, at: now })
@@ -72,14 +80,13 @@ function botTick() {
   }
 }
 
-// ---------- NOVA PARTIJA (samo solo i test režim, bez admina) ----------
 async function newGame() {
   if (!st || !(st.test || st.solo)) return;
   if (!st.finishedAt && !confirm("Početi ispočetka? Trenutni napredak se briše.")) return;
-  stopBots();                                                     // briše botove sa rang-liste
+  stopBots();
   try { await deleteDoc(doc(db, "players", uid)); } catch (e) { console.error(e); }
   st = null; Q = []; phase = realPhase; justSolved = null; incoming = []; seen.clear();
-  render();                                                       // vraća na ekran za ulazak
+  render();
 }
 document.querySelectorAll(".newgame").forEach(b => { b.onclick = newGame; });
 
