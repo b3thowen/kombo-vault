@@ -31,6 +31,11 @@
     <p class="small" id="msg"></p>
     <h2 style="margin-top:28px">Timovi (<span id="n">0</span>)</h2>
     <table><thead><tr><th>TIM</th><th>POENI</th><th>ZADACI</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+    <h2 style="margin-top:28px">Istorija igara (<span id="hn">0</span>)</h2>
+    <p class="small">Čuva se i posle RESET-a. Klikni red za detalje (zadaci, pogrešni pokušaji, hintovi).</p>
+    <div class="group"><select id="hf"><option value="">Sve vrste</option><option value="group">Grupna igra</option><option value="solo">Solo</option><option value="test">Test (botovi)</option></select></div>
+    <table><thead><tr><th>TIM</th><th>VRSTA</th><th>POČETAK</th><th>POENI</th><th>ZADACI</th><th>STATUS</th><th></th></tr></thead><tbody id="hrows"></tbody></table>
+    <div class="actions"><button class="secondary" id="hCsv">Preuzmi CSV</button><button class="danger" id="hClear">Obriši istoriju</button></div>
     <div class="actions"><a class="secondary" style="padding:13px 16px;border:1px solid var(--line);border-radius:10px;color:var(--cyan);text-decoration:none" href="leaderboard.html" target="_blank">Otvori rang-listu →</a></div>
   </section>
 </div>
