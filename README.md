@@ -6,29 +6,28 @@ Igra je nastala kao pratnja klasi;ne prezentacije za predavanje iz Diskretne Mat
 
 ## Šta igra pokriva
 
-Gradivo je iz poglavlja o uređenim i neuređenim izborima elemenata:
+**Gradivo je iz poglavlja o uređenim i neuređenim izborima elemenata:**
 
-| Tema |
-| Uređeni izbor sa ponavljanjem |
-| Permutacije skupa |
-| m-permutacije skupa |
-| Permutacije multiskupa |
-| Podskupovi skupa od n elemenata |
-| m-kombinacije skupa |
-| Jednačine x1 + ... + xm = n (zvezde i pregrade) |
-| m-kombinacije multiskupa |
+* Uređeni izbor sa ponavljanjem
+* Permutacije skupa
+* m-permutacije skupa
+* Permutacije multiskupa
+* Podskupovi skupa od n elemenata
+* m-kombinacije skupa
+* Jednačine $x_1 + \dots + x_m = n$ (zvezde i pregrade)
+* m-kombinacije multiskupa
 
 ## Načini igre
 
 Na ekranu za ulazak bira se način igre i opcije:
 
 | Izbor | Opis |
-|---|---|
-| Trezor | 6 zadataka, svaka tačna daje jednu cifru. Cifre se unose u završni trezor. |
-| Nivoi | 4 nivoa i 9 zadataka. Sledeći nivo se otključava tek kada se završi prethodni. |
-| Solo | Igra se sam, odmah, bez čekanja administratora i bez pojavljivanja na rang-listi. |
-| Test režim | Igra počinje odmah, a na rang-listi se pojavljuju 4 računarska igrača. |
-| Bez opcija | Takmičenje između timova: čeka se START administratora, rang-lista i sabotaže su aktivni. |
+| :--- | :--- |
+| **Trezor** | 6 zadataka, svaka tačna daje jednu cifru. Cifre se unose u završni trezor. |
+| **Nivoi** | 4 nivoa i 9 zadataka. Sledeći nivo se otključava tek kada se završi prethodni. |
+| **Solo** | Igra se sam, odmah, bez čekanja administratora i bez pojavljivanja na rang-listi. |
+| **Test režim** | Igra počinje odmah, a na rang-listi se pojavljuju 4 računarska igrača. |
+| **Bez opcija** | Takmičenje između timova: čeka se START administratora, rang-lista i sabotaže su aktivni. |
 
 Nivoi: Osnove, Permutacije, Kombinacije, Zvezde i pregrade.
 
