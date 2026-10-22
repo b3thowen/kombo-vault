@@ -14,6 +14,15 @@
       <div id="clock" class="clock">--:--</div>
     </header>
 
+    <div id="acct" class="flex-between" style="margin:-8px 0 16px">
+      <span id="acctInfo" class="small"></span>
+      <span>
+        <button id="loginBtn" class="secondary hidden">Prijavi se Google nalogom</button>
+        <button id="meBtn" class="secondary hidden">Moji rezultati</button>
+        <button id="logoutBtn" class="secondary hidden">Odjava</button>
+      </span>
+    </div>
+
     <section id="v-load" class="panel">
       <p class="small">Učitavanje…</p>
     </section>
@@ -106,6 +115,12 @@
       <div class="actions"><button class="secondary newgame hidden">Nova partija</button></div>
     </section>
 
+    <section id="v-me" class="panel hidden">
+      <h2>Moji rezultati</h2>
+      <div id="meBody" class="small"></div>
+      <div class="actions"><button id="meBack" class="secondary">Nazad</button></div>
+    </section>
+
     <section id="v-end" class="panel hidden">
       <h2>Vreme je isteklo</h2>
       <p id="endTxt" class="small"></p>
@@ -113,8 +128,30 @@
 
   </div>
 
+  <div id="credit" class="credit" aria-label="made by sara :)">made by sara :)</div>
+
   <div id="toast" class="toast hidden"></div>
 
+  <script>
+
+  (function () {
+    const el = document.getElementById("credit"), text = "made by sara :)", chars = "0123456789!()+*/^=C";
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rnd = () => chars[Math.floor(Math.random() * chars.length)];
+    function run() {
+      clearInterval(el._t);
+      const t0 = performance.now(), end = 600 + (text.length - 1) * 90;
+      el._t = setInterval(() => {
+        const f = performance.now() - t0;
+        if (f > end) { el.textContent = text; clearInterval(el._t); return; }
+        el.innerHTML = [...text].map((c, i) =>
+          c === " " ? " " : f > 600 + i * 90 ? c : '<span class="r">' + rnd() + "</span>").join("");
+      }, 45);
+    }
+    setTimeout(run, 400);
+    el.addEventListener("mouseenter", run);
+  })();
+  </script>
   <script type="module" src="game.js"></script>
 </body>
 </html>
