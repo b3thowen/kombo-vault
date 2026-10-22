@@ -202,7 +202,7 @@ tbody tr:first-child:not(:only-child) td:first-child{box-shadow:inset 4px 0 var(
 @media print{body{background:#fff}body::before{display:none}.panel,header{box-shadow:none}}
 
 .credit{
-  margin:30px 0 0;text-align:center;user-select:none;
+  margin:-12px 0 20px;padding-left:4px;text-align:left;user-select:none;
   font:500 14px/1.4 var(--mono);letter-spacing:.05em;color:var(--blue);opacity:.55;
 }
 .credit::after{
@@ -211,7 +211,4 @@ tbody tr:first-child:not(:only-child) td:first-child{box-shadow:inset 4px 0 var(
 }
 .credit .r{opacity:.45}
 @keyframes blink{50%{opacity:0}}
-@media (min-width:1100px){
-  .credit{position:fixed;left:3vw;bottom:3.5vh;margin:0;text-align:left;z-index:0;font-size:15px}
-}
 @media (prefers-reduced-motion:reduce){.credit::after{animation:none}}
